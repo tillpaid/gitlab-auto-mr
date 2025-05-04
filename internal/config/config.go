@@ -14,6 +14,11 @@ type Config struct {
 	GitConstraints struct {
 		ExpectedOriginHost string `yaml:"expectedOriginHost" validate:"required"`
 	} `yaml:"gitConstraints"`
+	Jira struct {
+		Url      string `yaml:"url" validate:"required"`
+		Username string `yaml:"username" validate:"required"`
+		Password string `yaml:"password" validate:"required"`
+	} `yaml:"jira"`
 }
 
 func Load() (*Config, error) {

@@ -1,2 +1,6 @@
 gitConstraints:
     expectedOriginHost: "gitlab.example.com"
+jira:
+    url: "https://jira.example.com"
+    username: "username"
+    password: "password"

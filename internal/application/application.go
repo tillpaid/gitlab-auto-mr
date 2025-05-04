@@ -12,12 +12,14 @@ import (
 type App struct {
 	cfg        *config.Config
 	gitService *git.Service
+	jiraClient *jira.Client
 }
 
 func New(cfg *config.Config) *App {
 	return &App{
 		cfg:        cfg,
 		gitService: git.NewService(command.RunAndTrim),
+		jiraClient: jira.NewClient(cfg.Jira.Url, cfg.Jira.Username, cfg.Jira.Password),
 	}
 }
 
@@ -35,8 +37,8 @@ func (a *App) processOrigin() {
 		return
 	}
 
-	fmt.Println("Origin host:", originInfo.Host)
-	fmt.Println("Origin path:", originInfo.Path)
+	fmt.Printf("Origin host: %q\n", originInfo.Host)
+	fmt.Printf("Origin path: %q\n", originInfo.Path)
 
 	if originInfo.Host != a.cfg.GitConstraints.ExpectedOriginHost {
 		fmt.Printf("\tOrigin host %s does not match expected host %s\n", originInfo.Host,
@@ -47,11 +49,11 @@ func (a *App) processOrigin() {
 func (a *App) processBranch() {
 	branch, err := a.gitService.GetCurrentBranch()
 	if err != nil {
-		fmt.Println("Got error during getting current branch:", err.Error())
+		fmt.Printf("Got error during getting current branch: %q\n", err.Error())
 		return
 	}
 
-	fmt.Println("Branch:", branch)
+	fmt.Printf("Branch: %q\n", branch)
 
 	issueKey, err := jira.ExtractIssueKey(branch)
 	if err != nil {
@@ -59,5 +61,13 @@ func (a *App) processBranch() {
 		return
 	}
 
-	fmt.Println("Issue key:", issueKey)
+	fmt.Printf("Issue key: %q\n", issueKey)
+
+	issue, err := a.jiraClient.GetIssueByKey(issueKey)
+	if err != nil {
+		fmt.Printf("\tError from Jira: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Issue summary from Jira: %q\n", issue.Fields.Summary)
 }
