@@ -1,6 +1,6 @@
 MAIN=cmd/main.go
 BIN=bin/app
-#GLOBAL_BIN=/usr/local/bin/cj
+GLOBAL_BIN=/usr/local/bin/gitlab-auto-mr
 
 run:
 	@clear
@@ -22,6 +22,6 @@ testfw:
 	clear
 	gow -c test ./internal/... -failfast
 
-#build-and-replace:
-#	@go build -o $(BIN) $(MAIN) && sudo cp $(BIN) $(GLOBAL_BIN)
-#	@echo "Built and copied into $(GLOBAL_BIN)"
+build-and-replace:
+	@go build -o $(BIN) $(MAIN) && sudo cp $(BIN) $(GLOBAL_BIN)
+	@echo "Built and copied into $(GLOBAL_BIN)"
