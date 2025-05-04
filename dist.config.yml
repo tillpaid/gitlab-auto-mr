@@ -1,0 +1,2 @@
+gitConstraints:
+    expectedOriginHost: "gitlab.example.com"
