@@ -24,11 +24,22 @@ func NewClient(baseURL, username, password string) *Client {
 }
 
 func (c *Client) GetIssueByKey(issueKey string) (*Issue, error) {
-	fullUrl := fmt.Sprintf("%s/rest/api/2/issue/%s", c.baseURL, url.PathEscape(issueKey))
+	path := fmt.Sprintf("/rest/api/2/issue/%s", url.PathEscape(issueKey))
+
+	var issue Issue
+	if err := c.doGetAndDecode(path, &issue); err != nil {
+		return nil, err
+	}
+
+	return &issue, nil
+}
+
+func (c *Client) doGetAndDecode(path string, target interface{}) error {
+	fullUrl := c.baseURL + path
 
 	req, err := http.NewRequest(http.MethodGet, fullUrl, nil)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	req.Header.Set("Authorization", c.basicAuthHeader())
@@ -36,18 +47,13 @@ func (c *Client) GetIssueByKey(issueKey string) (*Issue, error) {
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+		return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
-	var issue Issue
-	if err := json.NewDecoder(resp.Body).Decode(&issue); err != nil {
-		return nil, err
-	}
-
-	return &issue, nil
+	return json.NewDecoder(resp.Body).Decode(target)
 }
