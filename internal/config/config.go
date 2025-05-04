@@ -19,6 +19,10 @@ type Config struct {
 		Username string `yaml:"username" validate:"required"`
 		Password string `yaml:"password" validate:"required"`
 	} `yaml:"jira"`
+	Gitlab struct {
+		Url   string `yaml:"url" validate:"required"`
+		Token string `yaml:"token" validate:"required"`
+	} `yaml:"gitlab"`
 }
 
 func Load() (*Config, error) {

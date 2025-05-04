@@ -4,3 +4,6 @@ jira:
     url: "https://jira.example.com"
     username: "username"
     password: "password"
+gitlab:
+    url: "https://gitlab.example.com"
+    token: "token"
