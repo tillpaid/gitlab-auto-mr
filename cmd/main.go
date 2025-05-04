@@ -1,7 +1,8 @@
 package main
 
 import (
-	"log"
+	"fmt"
+	"os"
 
 	"github.com/tillpaid/gitlab-auto-mr/internal/application"
 	"github.com/tillpaid/gitlab-auto-mr/internal/config"
@@ -10,12 +11,14 @@ import (
 func main() {
 	cfg, err := config.Load()
 	if err != nil {
-		log.Fatal("Load config failed:", err)
+		fmt.Println("⚠️", err)
+		os.Exit(1)
 	}
 
 	app := application.New(cfg)
 
 	if err := app.Run(); err != nil {
-		log.Fatal("Application failed:", err)
+		fmt.Println("\n⚠️", err)
+		os.Exit(1)
 	}
 }
